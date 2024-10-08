@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button"
+import { Navbar } from "@/components/header/navbar"
 
 export default function Home() {
   return (
     <div>
-      <p className="underline">links next app</p>
-      <Button>Click me</Button>
+      <Navbar/>
+      <h1>Home page</h1>
 
     </div>
   );
