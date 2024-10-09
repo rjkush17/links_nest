@@ -10,6 +10,7 @@ export async function POST(req: Request) {
 
     // Parse the incoming JSON data from the request body
     const registerData = await req.json();
+    console.log(registerData)
 
     // Create a new user with the received data
     const user = await User.create(registerData);

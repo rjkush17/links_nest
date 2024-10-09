@@ -14,8 +14,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import usePOST from "@/hooks/usePOST";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function page() {
+  const { isError, isLoading, data, fetchPOST } = usePOST();
+
   const [name, setName] = React.useState<string>("");
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
@@ -84,12 +88,26 @@ export default function page() {
     }
 
     if (!hasError) {
-      console.log("Ready for send");
+      const data: any = { name, email, password, repassword };
+      fetchPOST("register", data);
+      setRePassword("");
+      setPassword("");
     }
   };
 
+  React.useEffect(()=>{
+    if (isError && isError.message) {
+      toast.error(isError.message);
+    }
+    if (data && data.message) {
+      toast.error(data.message);
+    }  
+  },[isError, data])
+
+  
   return (
-    <main className="flex justify-center items-center w-full min-h-screen">
+    <main className="flex justify-center items-center w-full max-h-screen">
+      <Toaster />
       <Card className="w-[600px]">
         <CardHeader>
           <CardTitle className="text-3xl">Create an Account</CardTitle>
@@ -146,6 +164,7 @@ export default function page() {
                   type="password"
                   placeholder="type password"
                   value={password}
+                  autoComplete="New password"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setPassword(e.target.value)
                   }
@@ -165,6 +184,7 @@ export default function page() {
                   type="password"
                   placeholder="Re-type password"
                   value={repassword}
+                  autoComplete="New password"
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setRePassword(e.target.value)
                   }
@@ -199,9 +219,13 @@ export default function page() {
                 </div>
               </div>
             </div>
-            <Button className="w-full py-4 mt-4" type="submit">
-              Create Account
-            </Button>
+            {isLoading ? (
+              <Button className="w-full py-4 mt-4">processing ...</Button>
+            ) : (
+              <Button className="w-full py-4 mt-4" type="submit">
+                Create Account
+              </Button>
+            )}
           </form>
           <div className="relative flex justify-center items-center my-4">
             <Separator className="w-full" />
