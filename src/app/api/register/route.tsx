@@ -1,31 +1,54 @@
-import { NextResponse } from 'next/server';
-import User from '@/models/userModel';
-import connectDB from '@/lib/database';
+import { NextResponse } from "next/server";
+import User from "@/models/userModel";
+import connectDB from "@/lib/database";
+import bcrypt from "bcrypt";
+import { v4 as uuidv4 } from 'uuid';
 
-// Handle POST requests for user registration
 export async function POST(req: Request) {
   try {
-    // Connect to the database
     await connectDB();
 
-    // Parse the incoming JSON data from the request body
     const registerData = await req.json();
-    console.log(registerData)
+    console.log(registerData);
 
-    // Create a new user with the received data
-    const user = await User.create(registerData);
+    const { name, email, password, repassword } = registerData;
 
-    // Return a success response with the created user data
+    const isEmailTaken: any =await  User.findOne({ email });
+    if (isEmailTaken) {
+      return NextResponse.json(
+        { message: "Email is already taken" },
+        { status: 400 }
+      );
+    }
+
+    if (name.length< 4) {
+      return NextResponse.json({ message: "First and last name should be at least 4 characters long" }, { status: 400 });
+    }
+    
+    if (password.length < 6) {
+      return NextResponse.json({ message: "Password should have at least 6 characters" }, { status: 400 });
+    }
+    if (password !== repassword ) {
+      return NextResponse.json({ message: "Password should have at least 6 characters" }, { status: 400 });
+    }
+   
+    const salt = 10;
+    const hash = await bcrypt.hash(password, salt);
+    const uniqueId = uuidv4();
+    
+    const user = await User.create({name,email,password : hash, userID : uniqueId});
+    if (!user) {
+      return NextResponse.json({ message: "user not created" }, { status: 400 });
+    }
+
     return NextResponse.json({
-      message: 'User registration is successful',
+      message: "User registration is successful",
       user,
     });
-
   } catch (error) {
-    // Return an error response in case something goes wrong
     return NextResponse.json(
-      { message: 'Error registering user', error: (error as Error).message },
-      { status: 500 } // Set appropriate HTTP status code for errors
+      { message: "Error registering user", error: (error as Error).message },
+      { status: 500 }
     );
   }
 }

@@ -25,14 +25,14 @@ const userSchema = new mongoose.Schema<IUser>({
     required: true,
     trim: true,
     minlength: 4,
-    maxlength: 45,
+    maxlength: 120,
   },
   userID: {
     type: String,
     required: true,
     trim: true,
     minlength: 3,
-    maxlength: 25,
+    maxlength: 200
   },
   providerName: {
     type: String
