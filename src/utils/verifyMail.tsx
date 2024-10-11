@@ -28,6 +28,6 @@ export const verifyMail = (
 
   transporter
     .sendMail(mail)
-    .then((res) => console.log("email send successfully", res))
+    .then((res) => console.log("email send successfully"))
     .catch((e) => console.log("email send failed", e));
 };
