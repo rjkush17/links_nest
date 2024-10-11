@@ -100,7 +100,7 @@ export async function POST(req: Request) {
         );
       }
       return NextResponse.json(
-        { message: "OTP create successfully", isOTPcreated },
+        { message: "OTP create successfully", otpModelObject },
         { status: 200 }
       );
     }

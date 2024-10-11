@@ -101,7 +101,8 @@ export default function page() {
     }
     if (data && data.message) {
       toast.error(data.message);
-    }  
+    }
+    console.log(data)
   },[isError, data])
 
   
