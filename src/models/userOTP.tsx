@@ -1,34 +1,27 @@
 import mongoose, { Document, Model } from "mongoose";
-import UserModel from "./userModel";
-
 interface IuserOtpSchema extends Document{
-    name: string,
-    userID: string,
-    userModel: mongoose.Schema.Types.ObjectId,
-    generatedTime: Date
+    otp: string,
+    email: string,
+    userModel: object,
+    generatedTime: number
 }
 
 const userOtpSchema = new mongoose.Schema({
-    email: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    userId: {
-      type: String,
-      required: true,
-    },
     otp: {
-      type: Number,
+      type: String,
+      required: true
+    },
+    email:{
+      type: String,
       required: true
     },
     userModel: {
-      type: UserModel,
-      required: true,
+      type: Object,
+      required: true
     },
     generatedTime: {
-      type: Date,
-      default: Date.now,
+      type: Number,
+      required: true,
       expires: 300
     }
   });

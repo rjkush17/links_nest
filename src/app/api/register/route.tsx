@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import genrateOTP from "@/utils/genrateOTP";
 import { verifyMail } from "@/utils/verifyMail";
+import UserOTP from "@/models/userOTP";
 
 export async function POST(req: Request) {
   try {
@@ -46,34 +47,63 @@ export async function POST(req: Request) {
     const salt = 10;
     const hash = await bcrypt.hash(password, salt);
     const uniqueId = uuidv4();
+    const genrateOtp = genrateOTP();
+    let subject = "Your OTP Code for email verification - Links Nest";
 
-    const userModel: {
-      name: string;
+    verifyMail(email, subject, genrateOtp);
+
+    const otpModelObject: {
+      otp: string;
       email: string;
-      password: string;
-      userID: string;
-    } = { name, email, password: hash, userID: uniqueId };
+      userModel: {
+        name: string;
+        email: string;
+        password: string;
+        userID: string;
+      };
+      generatedTime: number;
+    } = {
+      otp: genrateOtp,
+      email,
+      userModel: {
+        name,
+        email,
+        password: hash,
+        userID: uniqueId,
+      },
+      generatedTime: Date.now(),
+    };
 
+    const isOTPcreated = await UserOTP.findOne({
+      email: otpModelObject.userModel.email,
+    });
+    if (isOTPcreated) {
+      const OTPsend = await UserOTP.updateOne({ email: email }, otpModelObject);
 
-const otp = genrateOTP();
-let subject = "Your OTP Code for email verification - Links Nest"
+      if (!OTPsend) {
+        return NextResponse.json(
+          { message: "unable to create OTP" },
+          { status: 200 }
+        );
+      }
 
-verifyMail(email, subject, otp)
-
-
-
-// 5- it return thr function where email, uuiD genrate and share to use
-
-// 6- then user take that and req for virify email he send uuid and email with otp
-
-// 7- verify opt take the opt and verift the email and uuit if not valid then return not "not opt req found"
-
-// 7 - if found thne create the user 
-
-// Resend OPT code 
-
-// 1- create a button that send another request for the registration model if the another OPT model exit it delete the old one
-
+      return NextResponse.json(
+        { message: "OTP create successfully", isOTPcreated },
+        { status: 200 }
+      );
+    } else {
+      const OTPsend = await UserOTP.create(otpModelObject);
+      if (!OTPsend) {
+        return NextResponse.json(
+          { message: "unable to create OTP" },
+          { status: 200 }
+        );
+      }
+      return NextResponse.json(
+        { message: "OTP create successfully", isOTPcreated },
+        { status: 200 }
+      );
+    }
   } catch (error) {
     return NextResponse.json(
       { message: "Error registering user", error: (error as Error).message },
