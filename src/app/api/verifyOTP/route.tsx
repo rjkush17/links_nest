@@ -4,5 +4,6 @@ import connectDB from "@/lib/database";
 import UserOTP from "@/models/userOTP";
 
 export async function POST(req: Request){
-  
+   const data =await req.json()
+   console.log("worked", data)
 }
