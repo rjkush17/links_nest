@@ -74,6 +74,14 @@ export async function POST(req: Request) {
       generatedTime: Date.now(),
     };
 
+    const response: {
+      email: string;
+      userID: string;
+    } = {
+      email,
+      userID: uniqueId
+    }
+
     const isOTPcreated = await UserOTP.findOne({
       email: otpModelObject.userModel.email,
     });
@@ -88,7 +96,7 @@ export async function POST(req: Request) {
       }
 
       return NextResponse.json(
-        { message: "OTP create successfully", isOTPcreated },
+        { message: "OTP create successfully", response },
         { status: 200 }
       );
     } else {
@@ -100,7 +108,7 @@ export async function POST(req: Request) {
         );
       }
       return NextResponse.json(
-        { message: "OTP create successfully", otpModelObject },
+        { message: "OTP create successfully", response },
         { status: 200 }
       );
     }
