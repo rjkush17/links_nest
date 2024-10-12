@@ -23,7 +23,12 @@ const userOtpSchema = new mongoose.Schema({
       type: Number,
       required: true,
       expires: 300
-    }
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      expires: 1500,
+    },
   });
 
   const UserOTP = Model<IuserOtpSchema> = mongoose.models.UserOTP || mongoose.model<IuserOtpSchema>("UserOTP", userOtpSchema)

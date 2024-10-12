@@ -26,7 +26,6 @@ export default function OtpForm({ userData }: SignInformProps) {
   const { isError, isLoading, data, fetchPOST } = usePOST();
 
   async function handleOTP (e: React.FormEvent) {
-    console.log(opt)
     e.preventDefault();
     if (opt.length !== 6) {
       setOtpError("Please Enter the Full OTP");
@@ -43,14 +42,15 @@ export default function OtpForm({ userData }: SignInformProps) {
       toast.error(isError.message);
     }
     if (data && data.message) {
-      console.log(data)
       toast.success("login ss");
+      console.log(data)
       // redirect method
     }
   }, [data, isError]);
 
   return (
     <main className="flex justify-center items-center h-screen">
+       <Toaster />
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle className="text-3xl">Enter OTP</CardTitle>
