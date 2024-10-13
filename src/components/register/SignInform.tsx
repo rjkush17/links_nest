@@ -19,11 +19,11 @@ import usePOST from "@/hooks/usePOST";
 import toast, { Toaster } from "react-hot-toast";
 
 interface SignInformProps {
-  handleData?: any;
+  handleData: (para: any) => void;
+  resendData: (para: any) => void; // Add this line
 }
-
 export default function SignInform({
-  handleData
+  handleData, resendData
 }: SignInformProps) {
   const [name, setName] = React.useState<string>("");
   const [email, setEmail] = React.useState<string>("");
@@ -91,7 +91,8 @@ export default function SignInform({
     }
     if (!hasError) {
       const FormData: any = { name, email, password, repassword };
-      await fetchPOST("register", FormData);  
+      await fetchPOST("register", FormData); 
+      resendData?.(FormData) 
     }
   };
 
@@ -101,6 +102,7 @@ export default function SignInform({
     }
     if (data && data.message) {
       handleData?.(data.response);
+     
     }
   },[data,isError])
 
@@ -219,7 +221,7 @@ export default function SignInform({
               </div>
             </div>
             {isLoading ? (
-              <Button className="w-full py-4 mt-4">Processing...</Button>
+              <Button className="w-full py-4 mt-4" disabled>Processing...</Button>
             ) : (
               <Button className="w-full py-4 mt-4" type="submit">
                 Create Account

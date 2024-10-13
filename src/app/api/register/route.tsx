@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     const hash = await bcrypt.hash(password, salt);
     const uniqueId = uuidv4();
     const genrateOtp = genrateOTP();
-    const OTPgeneratedTime = Date.now()
+    const OTPgeneratedTime = Date.now();
     let subject = "Your OTP Code for email verification - Links Nest";
 
     verifyMail(email, subject, genrateOtp);
@@ -78,12 +78,12 @@ export async function POST(req: Request) {
     const response: {
       email: string;
       userID: string;
-      genratedTime: string | number;
+      genratedTime:number;
     } = {
       email,
       userID: uniqueId,
-      genratedTime: OTPgeneratedTime
-    }
+      genratedTime: OTPgeneratedTime,
+    };
 
     const isOTPcreated = await UserOTP.findOne({
       email: otpModelObject.userModel.email,

@@ -9,17 +9,19 @@ export async function POST(req: Request) {
     const responseData = await req.json();
     const { email, userID, otp } = responseData;
 
+    const alreadyPresent = await User.findOne({email})
+    if(alreadyPresent){
+      return NextResponse.json(
+        { message: "User already exits" },
+        { status: 400 }
+      );
+    }
+
     const stillExisted: any = await UserOTP.findOne({ email });
 
     if (!stillExisted) {
       return NextResponse.json(
         { message: "OTP expire or Server Error" },
-        { status: 400 }
-      );
-    }
-    if (userID !== stillExisted.userModel.userID) {
-      return NextResponse.json(
-        { message: "UserID Not Match" },
         { status: 400 }
       );
     }

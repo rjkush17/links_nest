@@ -17,6 +17,7 @@ export default function usePOST() {
 
     setIsLoading(true);
     setIsError(null);
+    setData(null)
 
     try {
       const response = await fetch(`/api/${url}`, {

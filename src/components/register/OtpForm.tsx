@@ -18,39 +18,72 @@ import toast, { Toaster } from "react-hot-toast";
 
 interface SignInformProps {
   userData?: any;
+  userResendData: (para: any) => void;
+  handleData: (para: any) => void;
 }
 
-export default function OtpForm({ userData }: SignInformProps) {
+export default function OtpForm({
+  userData,
+  userResendData,
+  handleData,
+}: SignInformProps) {
   const [opt, setOpt] = React.useState<string>("");
   const [otpError, setOtpError] = React.useState<boolean | string>(false);
+  const [counter, setCounter] = React.useState<number>(10); // Start with 30 seconds countdown
+
   const { isError, isLoading, data, fetchPOST } = usePOST();
 
-  async function handleOTP (e: React.FormEvent) {
+  async function handleOTP(e: React.FormEvent) {
     e.preventDefault();
     if (opt.length !== 6) {
-      setOtpError("Please Enter the Full OTP");
+      setOpt("")
+      setOtpError("Please Enter the full OTP");
     } else {
-      userData.otp =opt
-      setOtpError(false);
-      console.log("worked", userData);
-     await fetchPOST("verifyOTP", userData )
+      userData.otp = opt;
+      setOpt("")
+      setOtpError(false)
+      await fetchPOST("verifyOTP", userData);
     }
   }
 
   React.useEffect(() => {
     if (isError && isError.message) {
       toast.error(isError.message);
+      setOtpError(isError.message);
     }
     if (data && data.message) {
-      toast.success("login ss");
-      console.log(data)
-      // redirect method
+      toast.success(data.message);
+      if (data.response) {
+        handleData?.(data.response);
+      }
     }
   }, [data, isError]);
 
+  const resendOTP = async () => {
+    try {
+      setOtpError(false)
+      setOpt("")
+      await fetchPOST("register", userResendData);
+      setCounter(10);
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
+
+  // Timer Effect
+  React.useEffect(() => {
+    if (counter > 0) {
+      const timer = setInterval(() => {
+        setCounter((prevCounter) => prevCounter - 1);
+      }, 1000);
+
+      return () => clearInterval(timer);  // Cleanup the interval
+    }
+  }, [counter]);
+
   return (
     <main className="flex justify-center items-center h-screen">
-       <Toaster />
+      <Toaster />
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle className="text-3xl">Enter OTP</CardTitle>
@@ -78,16 +111,27 @@ export default function OtpForm({ userData }: SignInformProps) {
             {otpError && (
               <p className="text-sm text-red-500 font-semibold">{otpError}</p>
             )}
-            <div className="flex justify-center mt-6">
+
+            <div className="flex justify-center mt-6 gap-4">
               {!isLoading ? (
-                <Button type="submit" className="">
-                  Verify
-                </Button>
+                <Button type="submit">Verify</Button>
               ) : (
-                <Button className="">Verifing...</Button>
+                <Button className="">Verifying...</Button>
               )}
+              {counter <= 0 ?
+                <Button onClick={resendOTP}>Resend OTP</Button> : <Button disabled>Resend OTP in {counter}</Button>
+              }
             </div>
-            { isError && <p className="ml-2 font-semibold text-xs text-red-500">{isError.message}</p>}
+            {/* {counter > 0 && ( // Display countdown timer
+              <p className="text-sm text-red-500 font-semibold">
+                You can resend OTP in {counter} seconds
+              </p>
+            )} */}
+            {/* {isError && (
+              <p className="ml-2 font-semibold text-xs text-red-500">
+                {isError.message}
+              </p>
+            )} */}
           </form>
         </CardContent>
       </Card>
