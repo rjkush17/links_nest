@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import User from "@/models/userModel";
 import connectDB from "@/lib/database";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import genrateOTP from "@/utils/genrateOTP";
 import { verifyMail } from "@/utils/verifyMail";
