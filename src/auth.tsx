@@ -36,16 +36,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const isPasswordCorrect = await bcrypt.compare(password, user.password)
         if(!isPasswordCorrect){
           throw new Error("Incorrect Email or Password")
+          
         }
-
-        // delete user.password
-        // delete user.updatedAt
-        // delete user.createdAt
-
-        console.log(user)
+        delete user.password
+        delete user.updatedAt
+        delete user.createdAt
 
         return user
       },
     }),
   ],
+  pages: {
+    signIn: "/login",
+  },
 });

@@ -108,7 +108,7 @@ export default function SignInform({
 
   return (
     <main className="flex justify-center items-center w-full h-screen">
-      <Toaster />
+      {/* <Toaster /> */}
       <Card className="w-[600px]">
         <CardHeader>
           <CardTitle className="text-3xl">Create an Account</CardTitle>

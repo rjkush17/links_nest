@@ -83,7 +83,7 @@ export default function OtpForm({
 
   return (
     <main className="flex justify-center items-center h-screen">
-      <Toaster />
+      {/* <Toaster /> */}
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle className="text-3xl">Enter OTP</CardTitle>
