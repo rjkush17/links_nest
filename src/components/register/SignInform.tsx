@@ -16,7 +16,11 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import usePOST from "@/hooks/usePOST";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import {loginWithGoogle, loginWithGithub} from "@/utils/authActions"
+import Link from "next/link";
+
+
 
 interface SignInformProps {
   handleData: (para: any) => void;
@@ -114,7 +118,9 @@ export default function SignInform({
           <CardTitle className="text-3xl">Create an Account</CardTitle>
           <CardDescription>
             Already have an account ?{" "}
+            <Link href="/login">
             <span className="font-semibold text-black underline">Login</span>
+            </Link>
           </CardDescription>
         </CardHeader>
         <CardContent className="w-11/12 mx-auto">
@@ -235,14 +241,14 @@ export default function SignInform({
             </span>
           </div>
           <div className="flex gap-3">
-            <Button className="w-full text-lg font-normal">
+            <Button className="w-full text-lg font-normal" onClick={()=>loginWithGoogle()}>
               {" "}
               <span className="text-2xl mx-2">
                 <FaGoogle />
               </span>{" "}
               Google
             </Button>
-            <Button className="w-full text-lg font-normal">
+            <Button className="w-full text-lg font-normal" onClick={()=>loginWithGithub()}>
               {" "}
               <span className="text-2xl mx-2">
                 <FaGithub />

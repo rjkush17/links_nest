@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import * as React from "react";
 import { FaGoogle } from "react-icons/fa";
 import { FaGithub } from "react-icons/fa";
@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import toast, { Toaster } from "react-hot-toast";
-import { signIn } from "next-auth/react";
-import { useRouter } from 'next/navigation'
-import { handlers } from "@/auth";
+import toast from "react-hot-toast";
+import {loginWithGoogle ,loginWithGithub, loginWithCredentials} from "@/utils/authActions"
+import Link from "next/link";
+
+
+
 
 function page() {
   const [email, setEmail] = React.useState<string>("");
@@ -25,38 +26,28 @@ function page() {
   const [loading, setLoading] = React.useState<Boolean>(false);
   const [error, setError] = React.useState<string>("");
 
-  const router = useRouter()
-
-
-  const submitHandler = async (e:any) => {
+  const submitHandler = async (e: any) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-
     try {
-      "user server"
-      const data = await signIn("credentials", {
-        email,
-        password,
-        redirectTo: "/"
-      });
-      console.log(data)
-
-      if (data && data.error) {
-        setError(data.error);
-        toast.error(data.error)
-      } else {
-        toast.success('Successfully logged in!')
-        router.push('/')
+      const result = await loginWithCredentials({ email, password });
+      if (result?.message) {
+        toast.success(result.message);
+      }
+      if (result?.error) {
+        toast.error(result.error);
+        setError(result.error);
       }
     } catch (error) {
-      toast.error("Login failed. Please try again.")
+      toast.error("Login failed. Please try again.");
       setError("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <main className="flex justify-center items-center w-full h-screen">
@@ -65,7 +56,9 @@ function page() {
           <CardTitle className="text-3xl">Welcome back!</CardTitle>
           <CardDescription>
             Not have account ? Create a account{" "}
+            <Link href="/register">
             <span className="font-semibold text-black underline">HERE</span>
+            </Link>
           </CardDescription>
         </CardHeader>
         <CardContent className="w-11/12 mx-auto">
@@ -80,6 +73,7 @@ function page() {
                   placeholder="Write your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
                   required
                 />
               </div>
@@ -92,32 +86,26 @@ function page() {
                   type="password"
                   placeholder="type password"
                   value={password}
+                  autoComplete="password"
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
-              <div className="items-top flex space-x-2">
-                <Checkbox id="terms1" name="term" />
-                <div className="grid gap-1.5 leading-none">
-                  <label
-                    htmlFor="terms1"
-                    className="text-sm font-medium leading-none text-muted-foreground"
-                  >
-                    Remember me
-                  </label>
-                </div>
-              </div>
             </div>
 
-            {loading ?  <Button className="w-full py-4 mt-4" disabled>
-              loging...
-            </Button> :
-             <Button className="w-full py-4 mt-4" type="submit">
-             Login
-           </Button>
-             }
+            {error && (
+              <p className="ml-2 font-semibold text-xs text-red-500">{error}</p>
+            )}
 
-           
+            {loading ? (
+              <Button className="w-full py-4 mt-4" disabled>
+                loging...
+              </Button>
+            ) : (
+              <Button className="w-full py-4 mt-4" type="submit">
+                Login
+              </Button>
+            )}
           </form>
           <div className="relative flex justify-center items-center my-4">
             <Separator className="w-full" />
@@ -126,14 +114,14 @@ function page() {
             </span>
           </div>
           <div className="flex gap-3">
-            <Button className="w-full text-lg font-normal">
+            <Button className="w-full text-lg font-normal" onClick={loginWithGoogle}>
               {" "}
               <span className="text-2xl mx-2">
                 <FaGoogle />
               </span>{" "}
               Google
             </Button>
-            <Button className="w-full text-lg font-normal">
+            <Button className="w-full text-lg font-normal" onClick={loginWithGithub}>
               {" "}
               <span className="text-2xl mx-2">
                 <FaGithub />
