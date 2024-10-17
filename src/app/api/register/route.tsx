@@ -79,10 +79,12 @@ export async function POST(req: Request) {
       email: string;
       userID: string;
       genratedTime:number;
+      password:string
     } = {
       email,
       userID: uniqueId,
       genratedTime: OTPgeneratedTime,
+      password: hash,
     };
 
     const isOTPcreated = await UserOTP.findOne({

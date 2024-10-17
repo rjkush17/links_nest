@@ -2,17 +2,13 @@
 import { signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
 
-export const logout = async () => {
+export const handleLogout = async () => {
   await signOut()
 };
 
-export const loginWithCredentials = async ({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) => {
+export const loginWithCredentials = async (
+  email:any,
+  password:any) => {
   try {
     await signIn("credentials", { email, password, redirectTo: "/" });
     return {

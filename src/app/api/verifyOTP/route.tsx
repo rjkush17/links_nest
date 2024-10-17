@@ -37,11 +37,11 @@ export async function POST(req: Request) {
     if (otp === stillExisted.otp) {
       const newUser = await User.create(stillExisted.userModel);
       return NextResponse.json({
-        message: "Verification complete",
+        message: "Verification complete now login ",
         userDetail: newUser,
       },{status:200});
     } else {
-      return NextResponse.json({ message: "Incorrect OTP" }, { status: 400 });
+      return NextResponse.json({ message: "Incorrect OTP", isVerified: true }, { status: 400 });
     }
   } catch (error) {
     return NextResponse.json(

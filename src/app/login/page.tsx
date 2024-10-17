@@ -16,11 +16,25 @@ import { Separator } from "@/components/ui/separator";
 import toast from "react-hot-toast";
 import {loginWithGoogle ,loginWithGithub, loginWithCredentials} from "@/utils/authActions"
 import Link from "next/link";
+import { useSession } from "next-auth/react"
+import { useRouter } from 'next/navigation'
 
 
 
 
 function page() {
+
+  const router = useRouter()
+  const { data: session } = useSession()
+
+    if (session?.user) {
+      toast("You are already logged in, redirecting to home...", {
+        icon: '❌',
+      });
+    router.push("/")
+    return null
+  }
+
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const [loading, setLoading] = React.useState<Boolean>(false);
@@ -32,7 +46,7 @@ function page() {
     setError("");
 
     try {
-      const result = await loginWithCredentials({ email, password });
+      const result = await loginWithCredentials( email, password );
       if (result?.message) {
         toast.success(result.message);
       }
@@ -114,14 +128,14 @@ function page() {
             </span>
           </div>
           <div className="flex gap-3">
-            <Button className="w-full text-lg font-normal" onClick={loginWithGoogle}>
+            <Button className="w-full text-lg font-normal" onClick={()=>loginWithGoogle()}>
               {" "}
               <span className="text-2xl mx-2">
                 <FaGoogle />
               </span>{" "}
               Google
             </Button>
-            <Button className="w-full text-lg font-normal" onClick={loginWithGithub}>
+            <Button className="w-full text-lg font-normal" onClick={()=>loginWithGithub()}>
               {" "}
               <span className="text-2xl mx-2">
                 <FaGithub />
