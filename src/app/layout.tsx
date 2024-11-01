@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { Navbar } from "@/components/header/navbar";
+import Footer from "@/components/footer/Footer";
 import { SessionProvider } from "next-auth/react";
 
 const geistSans = localFont({
@@ -35,6 +36,7 @@ export default function RootLayout({
           <Toaster />
           <Navbar />
           {children}
+          <Footer/>
         </SessionProvider>
       </body>
     </html>

@@ -11,7 +11,7 @@ export async function Navbar() {
 
 
   return (
-    <Menubar className="px-16 py-8 ">
+    <Menubar className="px-8 py-8 ">
       <div className="flex justify-between items-center w-full">
         <div>
           <MenubarMenu>
