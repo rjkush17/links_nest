@@ -82,11 +82,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           providerID: account?.providerAccountId,
         };
 
-        const userCreated = await User.create(userModel); // Ensure async with await
+        const userCreated: any = await User.create(userModel); // Ensure async with await
         if (!userCreated) {
           throw new Error("User not created");
         }
-
+        user = userCreated;
         return true;
       } catch (error) {
         console.error("signIn callback failure:", error);
@@ -94,39 +94,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
     },
     async jwt({ user, token }) {
-
-      if(user){
-        console.log(user)
+      if (user) {
+        await connectDB();
+        const userDetails: any = await User.findOne({ email: user?.email });
+        token.UserID = userDetails?.userID;
+        token.createdAt = userDetails?.createdAt;
+        token.updatedAt = userDetails?.updatedAt;
       }
-      // await connectDB();
-
-      // try {
-      //   const findUser: any = await User.findOne({ email: user?.email });
-      //   if (!findUser) {
-      //     throw new Error("user email not find in DB");
-      //   }
-
-      //   token.userID = findUser?.userID;
-      //   token.name = findUser?.name;
-      //   token.email = findUser?.email;
-      // } catch (error) {
-      //   console.log("fail to modify the token", error);
-      // }
       return token;
     },
 
-    // async session({ session, token }) {
-    //   // Ensure token properties exist and are of type string before assigning them to session
-    //   if (typeof token.email === 'string' && typeof token.name === 'string' && typeof token.userID === 'string') {
-    //     session.user.email = token.email;
-    //     session.user.name = token.name;
-    //     session.user.id = token.userID;
-    //   } else {
-    //     throw new Error("Missing or invalid token information in session callback.");
-    //   }
-
-    //   return session;
-    // },
+    async session({ session, token }:any) {
+     
+      session.user.userID = token.UserID
+      session.user.createdAt = token.createdAt
+      session.user.updatedAt = token.updatedAt
+      console.log("session--------------------------------------------------  ", session)
+      return session;
+    },
   },
   pages: {
     signIn: "/login",
