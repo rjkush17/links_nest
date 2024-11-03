@@ -45,7 +45,7 @@ export const otpMail = (otp:string | number) =>{
   <div class="container">
     <h2 class="header">Your OTP Code</h2>
     <p>Dear User,</p>
-    <p>Your OTP code for verifying your account is:</p>
+    <p>Your OTP code for verifying your Email is:</p>
     <p class="otp">${otp}</p> <!-- Use {{OTP}} as a placeholder -->
     <p>Please use this code within the next 5 minutes to complete your verification process. For security reasons, do not share this code with anyone.</p>
     <p>If you didn't request this, please ignore this email.</p>
