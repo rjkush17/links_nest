@@ -27,7 +27,7 @@ const forgotPasswordSchema = new mongoose.Schema({
     createdAt: {
       type: Date,
       default: Date.now,
-      expires: 1500,
+      expires: 310,
     },
   });
 
