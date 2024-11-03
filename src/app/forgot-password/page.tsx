@@ -1,7 +1,5 @@
 "use client";
 import * as React from "react";
-import { FaGoogle } from "react-icons/fa";
-import { FaGithub } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,15 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import toast from "react-hot-toast";
-import {
-  loginWithGoogle,
-  loginWithGithub,
-  loginWithCredentials,
-} from "@/utils/authActions";
-import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import {
   InputOTP,
@@ -31,9 +21,13 @@ import usePOST from "@/hooks/usePOST";
 
 function page() {
   const { isError, isLoading, data, fetchPOST } = usePOST();
+  const router = useRouter();
 
   const [changeScreen, setChangescreen] = React.useState<boolean>(true);
   const [error, setError] = React.useState<Record<string, string> | null>();
+  const [opt, setOpt] = React.useState<string>("");
+  const [otpError, setOtpError] = React.useState<boolean | string>(false);
+  const [counter, setCounter] = React.useState<number>(0);
 
   const [formData, setFromData] = React.useState<Record<string, string>>({
     email: "",
@@ -77,15 +71,68 @@ function page() {
     }
 
     if (!hasError) {
-      await fetchPOST("forgot-password/createOTP", formData);
+      await fetchPOST("forgot-password/created_OTP", formData);
+      if (isError) {
+        setChangescreen(false);
+        setCounter(60);
+      }
       return;
     }
-    return
+    return;
   }
+
+  async function handleOTP(e: React.FormEvent) {
+    e.preventDefault();
+    if (opt.length !== 6) {
+      setOpt("");
+      setOtpError("Please Enter the full OTP");
+    } else {
+      setOpt("");
+      setOtpError(false);
+      await fetchPOST("forgot-password/verify_OTP", {
+        email: formData.email,
+        otp: opt,
+      });
+    }
+  }
+
+  const resendOTP = async () => {
+    try {
+      setOtpError(false);
+      setOpt("");
+      await fetchPOST("forgot-password/created_OTP", formData);
+      setCounter(50);
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
+
+  React.useEffect(() => {
+    if (isError && isError.message) {
+      toast.error(isError.message);
+    }
+    if (data && data.message && !data.response) {
+      toast.success(data.message);
+    }
+    if (data && data.message && !data.response) {
+      toast.success(data.message);
+      router.push("/login");
+    }
+  }, [data, isError]);
+
+  React.useEffect(() => {
+    if (counter > 0) {
+      const timer = setInterval(() => {
+        setCounter((prevCounter) => prevCounter - 1);
+      }, 1000);
+
+      return () => clearInterval(timer); // Cleanup the interval
+    }
+  }, [counter]);
 
   return (
     <main className="flex justify-center items-center w-full h-screen">
-      {changeScreen ? (
+      {changeScreen && (
         <Card className="w-[500px]">
           <CardHeader>
             <CardTitle className="text-3xl">Forgot Password ? </CardTitle>
@@ -165,7 +212,8 @@ function page() {
             </form>
           </CardContent>
         </Card>
-      ) : (
+      )}{" "}
+      {!changeScreen && (
         <Card className="w-[350px]">
           <CardHeader>
             <CardTitle className="text-3xl">Enter OTP</CardTitle>
@@ -174,12 +222,12 @@ function page() {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
-            <form>
+            <form onSubmit={handleOTP}>
               <InputOTP
                 className=""
                 maxLength={6}
-                // value={opt}
-                // onChange={(e: any) => setOpt(e)}
+                value={opt}
+                onChange={(e: any) => setOpt(e)}
               >
                 <InputOTPGroup>
                   <InputOTPSlot index={0} />
@@ -190,21 +238,21 @@ function page() {
                   <InputOTPSlot index={5} />
                 </InputOTPGroup>
               </InputOTP>
-              {/* {otpError && (
-             <p className="text-sm text-red-500 font-semibold">{otpError}</p>
-           )} */}
+              {otpError && (
+                <p className="text-sm text-red-500 font-semibold">{otpError}</p>
+              )}
 
               <div className="flex justify-center mt-6 gap-4">
-                {/* {!isLoading ? ( */}
-                <Button type="submit">Verify</Button>
-                {/* ) : ( */}
-                <Button className="">Verifying...</Button>
-                {/* )} */}
-                {/* {counter <= 0 ? ( */}
-                <Button>Resend OTP</Button>
-                {/* ) : ( */}
-                <Button disabled>Resend OTP in</Button>
-                {/* )} */}
+                {!isLoading ? (
+                  <Button type="submit">Verify</Button>
+                ) : (
+                  <Button className="">Verifying...</Button>
+                )}
+                {counter <= 0 ? (
+                  <Button onClick={() => resendOTP()}>Resend OTP</Button>
+                ) : (
+                  <Button disabled>Resend OTP in {counter}</Button>
+                )}
               </div>
             </form>
           </CardContent>
