@@ -19,26 +19,26 @@ import Link from "next/link";
 import { useSession } from "next-auth/react"
 import { useRouter } from 'next/navigation'
 
-
-
-
 function page() {
 
   const router = useRouter()
   const { data: session } = useSession()
 
-    if (session?.user) {
-      toast("You are already logged in, redirecting to home...", {
-        icon: '❌',
-      });
-    router.push("/")
-    return null
-  }
-
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const [loading, setLoading] = React.useState<Boolean>(false);
   const [error, setError] = React.useState<string>("");
+
+  React.useEffect(()=>{
+    if (session?.user) {
+        toast("You are already logged in, redirecting to home...", {
+          icon: '❌',
+        });
+      router.push("/")
+    }
+  }, [session, router]);
+
+
 
   const submitHandler = async (e: any) => {
     e.preventDefault();
@@ -62,6 +62,9 @@ function page() {
     }
   };
 
+  if (status === "loading") {
+    return <p>Loading...</p>; // You can show a loading spinner here if you prefer
+  }
 
   return (
     <main className="flex justify-center items-center w-full h-screen">
@@ -112,14 +115,20 @@ function page() {
             )}
 
             {loading ? (
-              <Button className="w-full py-4 mt-4" disabled>
+              <Button className="w-full py-4 my-4" disabled>
                 loging...
               </Button>
             ) : (
-              <Button className="w-full py-4 mt-4" type="submit">
+              <Button className="w-full py-4 my-4" type="submit">
                 Login
               </Button>
             )}
+              <CardDescription>
+            Forgot Password ? You can reset the password{" "}
+            <Link href="/forgot-password">
+            <span className="font-semibold text-black underline">HERE</span>
+            </Link>
+          </CardDescription>
           </form>
           <div className="relative flex justify-center items-center my-4">
             <Separator className="w-full" />

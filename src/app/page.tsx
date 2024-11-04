@@ -1,10 +1,10 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
 
 export default function Home() {
   const { data: session } = useSession();
-  console.log("page Home ---", session);
 
   return (
     <div>

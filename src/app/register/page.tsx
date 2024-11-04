@@ -1,5 +1,5 @@
 "use client";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import SignInform from "@/components/register/SignInform"
 import Otpform from "@/components/register/OtpForm"
 import { useSession } from "next-auth/react"
@@ -10,20 +10,21 @@ import toast from "react-hot-toast";
 export default function page() {
 
   const router = useRouter()
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
 
-    if (session?.user) {
-      toast("You are already logged in, redirecting to home...", {
-        icon: '❌',
-      });
-    router.push("/")
-    return null
-  }
-
+  
   const [pageState, setPageState] = useState<boolean>(true);
   const [userData, setUserData] = useState<Record<string, string> | null>(null)
   const [userResendData, setUserReSendData] = useState<any>(null)
 
+  useEffect(()=>{
+  if (status === "authenticated" && session?.user) {
+      toast("You are already logged in, redirecting to home...", {
+        icon: '❌',
+      });
+    router.push("/")
+  }
+}, [session, router, status]);
   
 
   const handleData = (para :any) =>{
