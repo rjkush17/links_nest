@@ -74,7 +74,7 @@ const nestSchema = new Schema<INest>(
   { timestamps: true }
 );
 
-const Nest: Model<INest> =
-  mongoose.model<INest>("Nest", nestSchema) || mongoose.models.Nest;
+const Nest: Model<INest> = mongoose.models.Nest || mongoose.model<INest>("Nest", nestSchema);
+
 
 export default Nest;
