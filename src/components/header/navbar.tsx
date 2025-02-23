@@ -22,23 +22,24 @@ export async function Navbar() {
         </div>
         <div className="ml-auto flex gap-4 items-center">
           <MenubarMenu>
-            { session?.user ?
-            <>
-              <Link href="/profile">
-                <p className="font-semibold text-lg">Profile</p>
-              </Link>
-              <Logout/>
-            </>
-            :
-            <>
-              <Link href="/register">
-                <Button>Sign Up</Button>
-              </Link>
-              <Link href="/login">
-                <Button>Login</Button>
-              </Link>
-            </>
-}
+            {session?.user ?
+              <>
+                <Link href="/profile">
+                  <p className="font-semibold text-lg">Profile</p>
+                </Link>
+                <Logout />
+              </>
+              :
+              <>
+                <Link href="/register">
+                  <Button>Sign Up</Button>
+                </Link>
+                <Link href="/login">
+                  <Button>Login</Button>
+                </Link>
+              </>
+
+            }
           </MenubarMenu>
         </div>
       </div>

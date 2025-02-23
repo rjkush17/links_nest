@@ -25,7 +25,7 @@ if(!cached.promise){
     }
 }
 
-cached.promise = mongoose.connect(url, opts).then((res)=>{
+cached.promise = mongoose.connect(url, opts).then(()=>{
     return mongoose;
 });
 
