@@ -109,7 +109,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.userID = token.UserID
       session.user.createdAt = token.createdAt
       session.user.updatedAt = token.updatedAt
-      console.log("session--------------------------------------------------  ", session)
       return session;
     },
   },

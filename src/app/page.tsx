@@ -1,7 +1,7 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
+import CreateNest from "@/components/buttons/CreateTree";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -25,8 +25,8 @@ export default function Home() {
         </p>
         {session ? (
           <div className="m-8 w-6/12 flex flex-col gap-8  items-center	">
-            <Button className="w-fit">Create a New Tree</Button>
             <Button className="w-fit">View All Tree</Button>
+            <CreateNest/>
           </div>
         ) : (
           <div className="m-8 w-6/12 flex flex-col gap-8  items-center	">

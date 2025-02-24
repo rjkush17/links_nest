@@ -28,7 +28,6 @@ export default function usePOST() {
       });
 
       const resData = await response.json();
-      console.log(resData)
 
       if (!response.ok) {
         setIsLoading(null);

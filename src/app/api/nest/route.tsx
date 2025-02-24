@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const id = uuidv4();
+    const id:string = uuidv4();
     const nestData = {
       nestID: id,
       userID: userID,
@@ -37,9 +37,9 @@ export async function POST(req: Request) {
       );
     }
 
-    if (allNest.length >= 3) {
+    if (allNest.length >= 10) {
       return NextResponse.json(
-        { message: "you already create your all 3 nest" },
+        { message: "you already create your all 10 nest" },
         { status: 500 }
       );
     }
@@ -55,6 +55,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       message: "Nest created successfully",
       response: nest,
+      nestID:id
     });
   } catch (error) {
     return NextResponse.json(
