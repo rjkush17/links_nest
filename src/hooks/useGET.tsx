@@ -1,13 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export default function usePOST() {
+export default function useGET() {
   const [data, setData] = useState<Record<string, string> | null>(null);
   const [isError, setIsError] = useState<Record<string, string> | null>(null);
   const [isLoading, setIsLoading] = useState<boolean | null>(null);
   const [controller, setController] = useState<AbortController | null>(null);
 
-  const fetchPOST = async (url: string, SentData: any) => {
+  const fetchGET = async (url: string) => {
     if (controller) {
       controller.abort();
     }
@@ -19,12 +19,7 @@ export default function usePOST() {
     setData(null)
 
     try {
-      const response = await fetch(`/api/${url}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(SentData),
-        signal: newController.signal,
-      });
+      const response = await fetch(`/api/${url}`);
 
       const resData = await response.json();
 
@@ -59,5 +54,6 @@ export default function usePOST() {
     };
   }, [controller]);
 
-  return { isError, isLoading, data, fetchPOST };
+  return { isError, isLoading, data, fetchGET };
 }
+
