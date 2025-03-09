@@ -15,15 +15,15 @@ function createNest() {
   useEffect(() => {
     if (data?.nestID) {  // Check if data and nestID exist
       router.push(`/edit/${data.nestID}`);
-      console.log("data is ----", data.nestID);
     }
   }, [data, router]);
 
   const handleNest = () => {
     fetchPOST("nest", session?.user)
       .then(() => {
-        toast.success("new Tree Created");
-      }
+
+        toast.success("new Tree Created")
+     }
       )
       .catch(() => {
         isError &&
