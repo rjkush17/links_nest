@@ -3,13 +3,11 @@ import Image from 'next/image'
 import usePOST from "@/hooks/usePOST"
 import toast from "react-hot-toast";
 
-type ImageComponentProps = {
-  imagelink: any;
-};
 
-export default function ImageComponent({ imagelink } : ImageComponentProps) {
 
-  const [image, setImage] = useState(imagelink?.image.links || "/profile.png")
+export default function ImageComponent({ imagelink }) {
+
+  const [image, setImage] = useState(imagelink.image?.link || "/profile.png")
   const { isError, isLoading, data, fetchPOST } = usePOST();
 
   useEffect(() => {
@@ -26,7 +24,7 @@ export default function ImageComponent({ imagelink } : ImageComponentProps) {
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
 
-    if (!imagelink || !imagelink.userID || !imagelink.nestID) {
+    if (!imagelink) {
       toast.error("Image data is missing!");
       return;
     }
@@ -65,8 +63,5 @@ export default function ImageComponent({ imagelink } : ImageComponentProps) {
         </div>
       }
     </>
-
   )
 }
-
-

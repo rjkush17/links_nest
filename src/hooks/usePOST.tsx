@@ -7,7 +7,7 @@ export default function usePOST() {
   const [isLoading, setIsLoading] = useState<boolean | null>(null);
   const [controller, setController] = useState<AbortController | null>(null);
 
-  const fetchPOST = async (url: string, SentData: any) => {
+  const fetchPOST = async (url: string, SentData: FormData | object) => {
     if (controller) {
       controller.abort();
     }
@@ -19,10 +19,11 @@ export default function usePOST() {
     setData(null)
 
     try {
+      const isFormData = SentData instanceof FormData;
       const response = await fetch(`/api/${url}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(SentData),
+        // headers: { "Content-Type": "application/json" },
+        body: isFormData ? SentData : JSON.stringify(SentData),
         signal: newController.signal,
       });
 

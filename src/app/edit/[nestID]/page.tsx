@@ -19,7 +19,7 @@ export default function NestPage() {
       {data &&
         <>
           <h1>Nesting edit page</h1>
-          <ImageComponent imageLink={data?.image} />
+          <ImageComponent imagelink={data?.response} />
         </>
       }
       {isError &&
