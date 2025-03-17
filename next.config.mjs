@@ -4,6 +4,9 @@ const nextConfig = {
     config.externals = [...config.externals, "bcrypt"];
     return config;
   },
+  images: {
+    domains: ["res.cloudinary.com"],
+  },
 };
 
 export default nextConfig;
