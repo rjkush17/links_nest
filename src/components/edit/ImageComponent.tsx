@@ -1,29 +1,26 @@
-import { useState, useEffect } from 'react';
-import Image from 'next/image'
-import usePOST from "@/hooks/usePOST"
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import usePOST from "@/hooks/usePOST";
 import toast from "react-hot-toast";
 
-
-
 export default function ImageComponent({ imagelink }) {
-
-  const [image, setImage] = useState(imagelink.image?.link || "/profile.png")
+  const [image, setImage] = useState(imagelink.image?.link || "/profile.png");
   const { isError, isLoading, data, fetchPOST } = usePOST();
 
   useEffect(() => {
-    if (data?.url) {
-      setImage(data.url);
+    if (data) {
+      setImage(data.response.link);
       toast.success(data?.message || "Image updated successfully!");
     }
 
     if (isError) {
       toast.error(isError.message);
     }
-
   }, [isError, data]);
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     if (!imagelink) {
       toast.error("Image data is missing!");
       return;
@@ -34,17 +31,30 @@ export default function ImageComponent({ imagelink }) {
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("user", imagelink.userID)
-    formData.append("nest", imagelink.nestID)
+    formData.append("user", imagelink.userID);
+    formData.append("nest", imagelink.nestID);
 
     await fetchPOST("/uploadImage", formData)
-    return
-  }
+      .then(() => {
+        if (data) {
+          setImage(data.response.link);
+          toast.success(data?.message || "Image updated successfully!");
+        }
+      })
+      .catch(() => {
+        if (isError) {
+          toast.error(isError.message);
+        }
+      });
+    return;
+  };
   return (
     <>
-      {isLoading ? <div>
-        <p>uploading image</p>
-      </div> :
+      {isLoading ? (
+        <div>
+          <p>uploading image</p>
+        </div>
+      ) : (
         <div>
           <input
             type="file"
@@ -61,7 +71,7 @@ export default function ImageComponent({ imagelink }) {
             onClick={() => document.getElementById("imageUpload")?.click()}
           />
         </div>
-      }
+      )}
     </>
-  )
+  );
 }
